@@ -3,112 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nice Slice</title>
+    <title>Nice Slice - Find Your Perfect Pizza</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script>
 </head>
 <body>
-    <div class="container">
+    <header>
         <h1>Nice Slice</h1>
-        <div class="search-bar">
-            <input type="text" id="location-search" placeholder="Enter city (e.g., Florence, Italy)">
-            <button onclick="searchPizzerias()">Search</button>
-        </div>
-        <div class="card" id="pizzeria-card" style="display: none;">
-            <img id="pizzeria-image" src="" alt="Signature Pizza">
-            <div class="card-content">
-                <h2 id="pizzeria-name"></h2>
-                <p class="tagline" id="pizzeria-tagline"></p>
-                <p class="rating" id="pizzeria-rating"></p>
-                <p><strong>Signature Pizza:</strong> <span id="pizzeria-signature"></span></p>
-                <p><strong>Location:</strong> <span id="pizzeria-location"></span></p>
-                <p><strong>Price Range:</strong> <span id="pizzeria-price"></span></p>
-                <button class="view-profile" onclick="showProfile()">View Pizzeria</button>
-            </div>
-        </div>
-        <div class="swipe-buttons" id="swipe-buttons" style="display: none;">
-            <button class="swipe-btn pass" onclick="swipe('pass')">X</button>
-            <button class="swipe-btn check" onclick="swipe('check')">✔</button>
+        <p>Find local pizzerias with a swipe!</p>
+    </header>
+    <div class="location-input">
+        <input type="text" id="location" placeholder="Enter city or zip code">
+        <button onclick="updateLocation()">Search</button>
+    </div>
+    <div class="swipe-container">
+        <div id="card-stack"></div>
+        <div class="swipe-actions">
+            <button onclick="swipeLeft()">👎 Pass</button>
+            <button onclick="swipeRight()">🍕 Like</button>
         </div>
     </div>
-
-    <!-- Modal for Full Pizzeria Profile -->
-    <div class="modal" id="profileModal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">×</span>
-            <h2 id="modal-name"></h2>
-            <img id="modal-image" src="" alt="Pizza Portfolio">
-            <p><strong>Story:</strong> <span id="modal-story"></span></p>
-            <p><strong>Signature Pizzas:</strong> <span id="modal-signature"></span></p>
-            <p><strong>Hours:</strong> <span id="modal-hours"></span></p>
-            <p><strong>Contact:</strong> <span id="modal-contact"></span></p>
-        </div>
-    </div>
-
-    <script>
-        let currentPizzeria = null;
-
-        Blacklist: ['Domino’s', 'Pizza Hut', 'Papa John’s', 'Little Caesars', 'Sbarro', 'California Pizza Kitchen', 'Papa Murphy’s', 'CiCi’s Pizza', 'Chuck E. Cheese', 'Marco’s Pizza'];
-
-        async function searchPizzerias() {
-            const location = document.getElementById('location-search').value;
-            try {
-                const response = await fetch(`/api/pizzerias?location=${encodeURIComponent(location)}`);
-                const pizzerias = await response.json();
-                if (pizzerias.length > 0) {
-                    currentPizzeria = pizzerias[0]; // Show first pizzeria
-                    displayPizzeria(currentPizzeria);
-                } else {
-                    alert('No pizzerias found in this location.');
-                    document.getElementById('pizzeria-card').style.display = 'none';
-                    document.getElementById('swipe-buttons').style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Error fetching pizzerias:', error);
-                alert('Error fetching pizzerias.');
-            }
-        }
-
-        function displayPizzeria(pizzeria) {
-            document.getElementById('pizzeria-image').src = pizzeria.photos[0] || 'https://via.placeholder.com/400x200?text=Pizza';
-            document.getElementById('pizzeria-name').textContent = pizzeria.name;
-            document.getElementById('pizzeria-tagline').textContent = pizzeria.tagline || 'Fresh, local pizza!';
-            document.getElementById('pizzeria-rating').textContent = pizzeria.rating ? `🍕 ${pizzeria.rating} (${pizzeria.reviews} reviews)` : '🍕 No ratings';
-            document.getElementById('pizzeria-signature').textContent = pizzeria.signaturePizza || 'Unknown';
-            document.getElementById('pizzeria-location').textContent = pizzeria.address || 'Unknown';
-            document.getElementById('pizzeria-price').textContent = pizzeria.priceRange || 'Unknown';
-
-            // Populate modal
-            document.getElementById('modal-name').textContent = pizzeria.name;
-            document.getElementById('modal-image').src = pizzeria.photos[0] || 'https://via.placeholder.com/400x200?text=Pizza';
-            document.getElementById('modal-story').textContent = pizzeria.story || 'A local favorite serving delicious pizzas.';
-            document.getElementById('modal-signature').textContent = pizzeria.signaturePizza || 'Unknown';
-            document.getElementById('modal-hours').textContent = pizzeria.hours || 'Unknown';
-            document.getElementById('modal-contact').textContent = pizzeria.contact || 'Unknown';
-
-            document.getElementById('pizzeria-card').style.display = 'block';
-            document.getElementById('swipe-buttons').style.display = 'flex';
-        }
-
-        function swipe(action) {
-            alert(`You ${action === 'check' ? 'saved' : 'passed'} ${currentPizzeria.name}!`);
-            // In a real app, fetch the next pizzeria
-            document.getElementById('pizzeria-card').style.display = 'none';
-            document.getElementById('swipe-buttons').style.display = 'none';
-        }
-
-        function showProfile() {
-            document.getElementById('profileModal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('profileModal').style.display = 'none';
-        }
-
-        window.onclick = (event) => {
-            if (event.target === document.getElementById('profileModal')) {
-                closeModal();
-            }
-        };
-    </script>
-</body>
-</html>
+    <div id="map"></div>
+    <div class="preferences">
+        <h2>Your Preferences</h2>
+        <label><input type="checkbox" id="indoor-seating" checked> Indoor Seating</label>
+        <label><input type="checkbox" id="outdoor-seating"> Outdoor Seating</label>
+        <label><input type="checkbox" id="reservations"> Reservations Available</label>
+        <label>Max Price: <input type="range" id="max-price" min="5" max="30" value="20"> $<span id="price-value">20</span></label>
