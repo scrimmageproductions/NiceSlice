@@ -1,218 +1,141 @@
-* {
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fff5e6;
+    color: #333;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
 }
 
-body {
-    background-color: #264653; /* Dark gray for charred crust vibe */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-}
-
-.container {
-    max-width: 600px;
-    width: 100%;
+header {
+    background-color: #a81c1c;
+    color: white;
     text-align: center;
+    padding: 1rem;
 }
 
-h1 {
-    color: #f1e8b8; /* Beige for crust */
-    font-size: 2.5em;
-    margin-bottom: 20px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-style: italic;
 }
 
-.search-bar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+.location-input {
+    text-align: center;
+    padding: 1rem;
+    background-color: #e8f5e9;
 }
 
-.search-bar input {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid #f4a261; /* Yellow for cheese */
-    border-radius: 5px;
-    font-size: 16px;
-    background-color: #f1e8b8; /* Beige for crust */
-    color: #264653;
+.location-input input {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #4caf50;
+    border-radius: 4px;
 }
 
-.search-bar button {
-    padding: 12px 20px;
-    background-color: #e63946; /* Red for sauce */
-    color: #f1e8b8;
+.location-input button {
+    padding: 0.5rem 1rem;
+    background-color: #4caf50;
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
 }
 
-.search-bar button:hover {
-    background-color: #d00000;
+.swipe-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    position: relative;
+    height: 500px;
 }
 
 .card {
-    background-color: #fff3e0; /* Light beige for dough */
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    border: 2px solid #a81c1c;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    width: 100%;
+    height: 450px;
     overflow: hidden;
-    margin-bottom: 20px;
-    border: 2px solid #f4a261; /* Cheese border */
+    transition: transform 0.3s ease;
+    cursor: grab;
 }
 
 .card img {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    border-bottom: 3px solid #e63946; /* Sauce accent */
 }
 
 .card-content {
-    padding: 20px;
-    text-align: left;
+    padding: 1rem;
 }
 
 .card-content h2 {
-    color: #e63946; /* Sauce red */
-    margin-bottom: 10px;
-}
-
-.tagline {
-    color: #2a9d8f; /* Herb green */
-    font-style: italic;
-    margin-bottom: 10px;
-}
-
-.rating {
-    color: #f4a261; /* Cheese yellow */
-    margin-bottom: 10px;
-    font-size: 1.1em;
+    margin: 0;
+    color: #a81c1c;
 }
 
 .card-content p {
-    color: #264653; /* Dark gray */
-    margin-bottom: 10px;
+    margin: 0.5rem 0;
 }
 
-.view-profile {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background-color: #2a9d8f; /* Herb green */
-    color: #f1e8b8;
+.swipe-actions {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.swipe-actions button {
+    padding: 0.75rem 2rem;
+    margin: 0 1rem;
+    font-size: 1.5rem;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
 }
 
-.view-profile:hover {
-    background-color: #1f776d;
+.swipe-actions button:first-child {
+    background-color: #ccc;
 }
 
-.swipe-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+.swipe-actions button:last-child {
+    background-color: #4caf50;
+    color: white;
 }
 
-.swipe-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: none;
-    font-size: 24px;
-    color: #f1e8b8;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.swipe-btn.pass {
-    background-color: #e63946; /* Sauce red */
-}
-
-.swipe-btn.check {
-    background-color: #2a9d8f; /* Herb green */
-}
-
-.swipe-btn:hover {
-    transform: scale(1.1);
-}
-
-.swipe-btn:active {
-    transform: scale(0.9);
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
+#map {
+    height: 300px;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    max-width: 600px;
+    margin: 2rem auto;
+    border: 1px solid #a81c1c;
 }
 
-.modal-content {
-    background-color: #fff3e0; /* Light beige */
-    padding: 20px;
-    border-radius: 15px;
-    max-width: 500px;
-    width: 90%;
-    position: relative;
-    text-align: left;
-    border: 2px solid #f4a261;
+.preferences {
+    background-color: #e8f5e9;
+    padding: 1rem;
+    text-align: center;
 }
 
-.modal-content img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    margin-bottom: 15px;
-    border-radius: 10px;
+.preferences label {
+    display: block;
+    margin: 0.5rem 0;
 }
 
-.modal-content p {
-    color: #264653;
-    margin-bottom: 10px;
+.preferences input[type="range"] {
+    width: 200px;
 }
 
-.close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    cursor: pointer;
-    color: #e63946;
-}
+@media (max-width: 600px) {
+    .swipe-container {
+        max-width: 90%;
+    }
 
-/* Responsive Design */
-@media (max-width: 500px) {
+    .card {
+        height: 400px;
+    }
+
     .card img {
         height: 150px;
-    }
-
-    .swipe-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-    }
-
-    .modal-content {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 2em;
     }
 }
