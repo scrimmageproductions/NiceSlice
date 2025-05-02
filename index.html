@@ -10,22 +10,22 @@
     <div class="container">
         <h1>Nice Slice</h1>
         <div class="search-bar">
-            <input type="text" placeholder="Find local pizzerias near you">
-            <button>Search</button>
+            <input type="text" id="location-search" placeholder="Enter city (e.g., Florence, Italy)">
+            <button onclick="searchPizzerias()">Search</button>
         </div>
-        <div class="card">
-            <img src="https://via.placeholder.com/400x200?text=Margherita+Pizza" alt="Pizzeria Signature Pizza">
+        <div class="card" id="pizzeria-card" style="display: none;">
+            <img id="pizzeria-image" src="" alt="Signature Pizza">
             <div class="card-content">
-                <h2>Luigi’s Pizzeria</h2>
-                <p class="tagline">Handcrafted pizzas with love since 1995</p>
-                <p class="rating">🍕 4.9 (120 reviews)</p>
-                <p><strong>Signature Pizza:</strong> Classic Margherita</p>
-                <p><strong>Location:</strong> Florence, Italy (5 miles)</p>
-                <p><strong>Price Range:</strong> €10-€20</p>
-                <button class="view-profile">View Pizzeria</button>
+                <h2 id="pizzeria-name"></h2>
+                <p class="tagline" id="pizzeria-tagline"></p>
+                <p class="rating" id="pizzeria-rating"></p>
+                <p><strong>Signature Pizza:</strong> <span id="pizzeria-signature"></span></p>
+                <p><strong>Location:</strong> <span id="pizzeria-location"></span></p>
+                <p><strong>Price Range:</strong> <span id="pizzeria-price"></span></p>
+                <button class="view-profile" onclick="showProfile()">View Pizzeria</button>
             </div>
         </div>
-        <div class="swipe-buttons">
+        <div class="swipe-buttons" id="swipe-buttons" style="display: none;">
             <button class="swipe-btn pass" onclick="swipe('pass')">X</button>
             <button class="swipe-btn check" onclick="swipe('check')">✔</button>
         </div>
@@ -34,39 +34,79 @@
     <!-- Modal for Full Pizzeria Profile -->
     <div class="modal" id="profileModal">
         <div class="modal-content">
-            <span class="close">×</span>
-            <h2>Luigi’s Pizzeria</h2>
-            <img src="https://via.placeholder.com/400x200?text=Pizza+Portfolio" alt="Pizza Portfolio">
-            <p><strong>Story:</strong> Family-run pizzeria using recipes passed down for generations, with fresh ingredients from local farms.</p>
-            <p><strong>Signature Pizzas:</strong> Margherita, Quattro Formaggi, Diavola</p>
-            <p><strong>Hours:</strong> Mon-Sun, 12 PM - 10 PM</p>
-            <p><strong>Contact:</strong> luigi@pizzeria.it</p>
+            <span class="close" onclick="closeModal()">×</span>
+            <h2 id="modal-name"></h2>
+            <img id="modal-image" src="" alt="Pizza Portfolio">
+            <p><strong>Story:</strong> <span id="modal-story"></span></p>
+            <p><strong>Signature Pizzas:</strong> <span id="modal-signature"></span></p>
+            <p><strong>Hours:</strong> <span id="modal-hours"></span></p>
+            <p><strong>Contact:</strong> <span id="modal-contact"></span></p>
         </div>
     </div>
 
     <script>
-        // Swipe action simulation
-        function swipe(action) {
-            alert(`You ${action === 'check' ? 'saved' : 'passed'} this pizzeria!`);
-            // In a real app, this would load the next card
+        let currentPizzeria = null;
+
+        Blacklist: ['Domino’s', 'Pizza Hut', 'Papa John’s', 'Little Caesars', 'Sbarro', 'California Pizza Kitchen', 'Papa Murphy’s', 'CiCi’s Pizza', 'Chuck E. Cheese', 'Marco’s Pizza'];
+
+        async function searchPizzerias() {
+            const location = document.getElementById('location-search').value;
+            try {
+                const response = await fetch(`/api/pizzerias?location=${encodeURIComponent(location)}`);
+                const pizzerias = await response.json();
+                if (pizzerias.length > 0) {
+                    currentPizzeria = pizzerias[0]; // Show first pizzeria
+                    displayPizzeria(currentPizzeria);
+                } else {
+                    alert('No pizzerias found in this location.');
+                    document.getElementById('pizzeria-card').style.display = 'none';
+                    document.getElementById('swipe-buttons').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error fetching pizzerias:', error);
+                alert('Error fetching pizzerias.');
+            }
         }
 
-        // Modal functionality
-        const modal = document.getElementById('profileModal');
-        const viewProfileBtn = document.querySelector('.view-profile');
-        const closeBtn = document.querySelector('.close');
+        function displayPizzeria(pizzeria) {
+            document.getElementById('pizzeria-image').src = pizzeria.photos[0] || 'https://via.placeholder.com/400x200?text=Pizza';
+            document.getElementById('pizzeria-name').textContent = pizzeria.name;
+            document.getElementById('pizzeria-tagline').textContent = pizzeria.tagline || 'Fresh, local pizza!';
+            document.getElementById('pizzeria-rating').textContent = pizzeria.rating ? `🍕 ${pizzeria.rating} (${pizzeria.reviews} reviews)` : '🍕 No ratings';
+            document.getElementById('pizzeria-signature').textContent = pizzeria.signaturePizza || 'Unknown';
+            document.getElementById('pizzeria-location').textContent = pizzeria.address || 'Unknown';
+            document.getElementById('pizzeria-price').textContent = pizzeria.priceRange || 'Unknown';
 
-        viewProfileBtn.onclick = () => {
-            modal.style.display = 'block';
-        };
+            // Populate modal
+            document.getElementById('modal-name').textContent = pizzeria.name;
+            document.getElementById('modal-image').src = pizzeria.photos[0] || 'https://via.placeholder.com/400x200?text=Pizza';
+            document.getElementById('modal-story').textContent = pizzeria.story || 'A local favorite serving delicious pizzas.';
+            document.getElementById('modal-signature').textContent = pizzeria.signaturePizza || 'Unknown';
+            document.getElementById('modal-hours').textContent = pizzeria.hours || 'Unknown';
+            document.getElementById('modal-contact').textContent = pizzeria.contact || 'Unknown';
 
-        closeBtn.onclick = () => {
-            modal.style.display = 'none';
-        };
+            document.getElementById('pizzeria-card').style.display = 'block';
+            document.getElementById('swipe-buttons').style.display = 'flex';
+        }
+
+        function swipe(action) {
+            alert(`You ${action === 'check' ? 'saved' : 'passed'} ${currentPizzeria.name}!`);
+            // In a real app, fetch the next pizzeria
+            document.getElementById('pizzeria-card').style.display = 'none';
+            document.getElementById('swipe-buttons').style.display = 'none';
+        }
+
+        function showProfile() {
+            document.getElementById('profileModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
 
         window.onclick = (event) => {
-            if (event.target === modal) {
-                modal.style.display = 'none';
+            if (event.target === document.getElementById('profileModal')) {
+                closeModal();
             }
         };
     </script>
