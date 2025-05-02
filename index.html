@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nice Slice</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Nice Slice</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Find local pizzerias near you">
+            <button>Search</button>
+        </div>
+        <div class="card">
+            <img src="https://via.placeholder.com/400x200?text=Margherita+Pizza" alt="Pizzeria Signature Pizza">
+            <div class="card-content">
+                <h2>Luigi’s Pizzeria</h2>
+                <p class="tagline">Handcrafted pizzas with love since 1995</p>
+                <p class="rating">🍕 4.9 (120 reviews)</p>
+                <p><strong>Signature Pizza:</strong> Classic Margherita</p>
+                <p><strong>Location:</strong> Florence, Italy (5 miles)</p>
+                <p><strong>Price Range:</strong> €10-€20</p>
+                <button class="view-profile">View Pizzeria</button>
+            </div>
+        </div>
+        <div class="swipe-buttons">
+            <button class="swipe-btn pass" onclick="swipe('pass')">X</button>
+            <button class="swipe-btn check" onclick="swipe('check')">✔</button>
+        </div>
+    </div>
+
+    <!-- Modal for Full Pizzeria Profile -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Luigi’s Pizzeria</h2>
+            <img src="https://via.placeholder.com/400x200?text=Pizza+Portfolio" alt="Pizza Portfolio">
+            <p><strong>Story:</strong> Family-run pizzeria using recipes passed down for generations, with fresh ingredients from local farms.</p>
+            <p><strong>Signature Pizzas:</strong> Margherita, Quattro Formaggi, Diavola</p>
+            <p><strong>Hours:</strong> Mon-Sun, 12 PM - 10 PM</p>
+            <p><strong>Contact:</strong> luigi@pizzeria.it</p>
+        </div>
+    </div>
+
+    <script>
+        // Swipe action simulation
+        function swipe(action) {
+            alert(`You ${action === 'check' ? 'saved' : 'passed'} this pizzeria!`);
+            // In a real app, this would load the next card
+        }
+
+        // Modal functionality
+        const modal = document.getElementById('profileModal');
+        const viewProfileBtn = document.querySelector('.view-profile');
+        const closeBtn = document.querySelector('.close');
+
+        viewProfileBtn.onclick = () => {
+            modal.style.display = 'block';
+        };
+
+        closeBtn.onclick = () => {
+            modal.style.display = 'none';
+        };
+
+        window.onclick = (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
